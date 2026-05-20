@@ -1,0 +1,30 @@
+services:
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    container_name: task-manager-dynamodb-local
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data"
+    ports:
+      - "8000:8000"
+    volumes:
+      - dynamodb-data:/home/dynamodblocal/data
+    working_dir: /home/dynamodblocal
+    user: root
+
+  dynamodb-init:
+    image: amazon/aws-cli:latest
+    container_name: task-manager-dynamodb-init
+    depends_on:
+      - dynamodb-local
+    environment:
+      AWS_ACCESS_KEY_ID: local
+      AWS_SECRET_ACCESS_KEY: local
+      AWS_DEFAULT_REGION: ap-southeast-1
+      DYNAMODB_ENDPOINT: http://dynamodb-local:8000
+      DYNAMODB_TABLE: TasksTable
+    volumes:
+      - ./docker/dynamodb/init.sh:/init.sh:ro
+    entrypoint: ["/bin/sh", "/init.sh"]
+    restart: "no"
+
+volumes:
+  dynamodb-data:
