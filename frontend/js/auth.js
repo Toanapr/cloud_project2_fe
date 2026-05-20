@@ -1,11 +1,11 @@
 document.getElementById('authForm')?.addEventListener('submit', function(e) {
-    e.preventDefault(); // Chặn việc tự động reload trang
+    e.preventDefault(); // Prevent the page from reloading.
     
-    // MOCK DATA: Chỗ này giả vờ là đã gọi Cognito và lấy được token
+    // MOCK DATA: This simulates a Cognito token for local development.
     const fakeToken = "eyJhbGciOiJIUzI1NiIsInR5c..."; 
     localStorage.setItem('userToken', fakeToken);
     
-    // Chuyển hướng sang trang làm việc
+    // Redirect to the workspace.
     window.location.href = "index.html";
 });
 

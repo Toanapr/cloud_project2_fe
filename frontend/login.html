@@ -1,36 +1,47 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập - Serverless Task Manager</title>
+    <title>Sign In - Serverless Task Manager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="login-body">
-    <div class="login-container">
-        <div class="login-banner">
+    <main class="login-container" aria-labelledby="login-title">
+        <section class="login-banner" aria-label="Application overview">
+            <div class="login-brand-mark" aria-hidden="true">TM</div>
             <h1>Task Master</h1>
-            <p>Smart work management on Serverless platform.</p>
-        </div>
+            <p>Manage tasks with protected access, clear priorities, and cloud-ready delivery.</p>
+            <div class="login-proof">
+                <span>Task CRUD</span>
+                <span>Secure Login</span>
+                <span>Cost Control</span>
+            </div>
+        </section>
         
-        <div class="login-form-wrapper">
+        <section class="login-form-wrapper" aria-label="Sign in form">
             <div class="login-form">
-                <h2>Welcome back!</h2>
+                <p class="login-eyebrow">Workspace sign in</p>
+                <h2 id="login-title">Welcome back</h2>
+                <p class="login-helper">Use your workspace email to open the task board.</p>
             
                 <form id="authForm">
                     <div class="input-group">
-                        <label>Email</label>
-                        <input type="email" id="email" required placeholder="nhap@email.com">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" required autocomplete="email" placeholder="you@taskmaster.vn">
                     </div>
                     <div class="input-group">
-                        <label>Password</label>
-                        <input type="password" id="password" required placeholder="••••••••">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" required autocomplete="current-password" placeholder="Enter your password">
                     </div>
-                    <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;">Sign In</button>
+                    <button type="submit" class="btn-primary login-submit">Sign In</button>
                 </form>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
     <script src="js/auth.js"></script>
 </body>
 </html>

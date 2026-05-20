@@ -5,6 +5,17 @@ let tasks = [];
 let visibleTasks = [];
 let currentEditTaskId = null;
 
+const PRIORITY_LABELS = {
+    high: "High",
+    medium: "Medium",
+    low: "Low"
+};
+
+const STATUS_LABELS = {
+    pending: "Pending",
+    done: "Done"
+};
+
 document.addEventListener("DOMContentLoaded", async () => {
     if (!localStorage.getItem("userToken")) {
         window.location.href = "login.html";
@@ -88,25 +99,27 @@ function renderTasks(taskList) {
     container.innerHTML = "";
 
     if (taskList.length === 0) {
-        container.innerHTML = '<div class="task-item"><div class="task-info"><h4>No tasks found</h4><p>Create a task or change your filters.</p></div></div>';
+        container.innerHTML = '<div class="task-empty"><h4>No tasks found</h4><p>Create a task or adjust your filters.</p></div>';
         return;
     }
 
     taskList.forEach((task) => {
         const doneClass = task.status === "done" ? "task-completed" : "";
+        const priorityLabel = PRIORITY_LABELS[task.priority] || task.priority;
+        const statusLabel = STATUS_LABELS[task.status] || task.status;
         const taskHTML = `
             <div class="task-item ${doneClass}">
                 <div class="task-info">
                     <h4>${escapeHtml(task.title)}</h4>
                     <p>${escapeHtml(task.description)}</p>
                 </div>
-                <div><span class="badge ${escapeHtml(task.priority)}">${escapeHtml(task.priority)}</span></div>
-                <div>${escapeHtml(task.dueDate)}</div>
-                <div><span class="badge ${escapeHtml(task.status)}">${escapeHtml(task.status)}</span></div>
+                <div class="task-cell" data-label="Priority"><span class="badge ${escapeHtml(task.priority)}">${escapeHtml(priorityLabel)}</span></div>
+                <div class="task-cell" data-label="Due Date">${escapeHtml(task.dueDate)}</div>
+                <div class="task-cell" data-label="Status"><span class="badge ${escapeHtml(task.status)}">${escapeHtml(statusLabel)}</span></div>
                 <div class="task-actions dropdown-container">
-                    <button class="btn-dots" onclick="toggleDropdown('${escapeHtml(task.taskId)}', event)">...</button>
+                    <button class="btn-dots" aria-label="Open task actions" onclick="toggleDropdown('${escapeHtml(task.taskId)}', event)">...</button>
                     <div id="dropdown-${escapeHtml(task.taskId)}" class="dropdown-menu">
-                        <button onclick="editTask('${escapeHtml(task.taskId)}')">Chinh sua</button>
+                        <button onclick="editTask('${escapeHtml(task.taskId)}')">Edit</button>
                         <button class="delete-btn" onclick="deleteTask('${escapeHtml(task.taskId)}')">Delete</button>
                     </div>
                 </div>
@@ -134,7 +147,7 @@ function logout() {
 
 function openModal() {
     currentEditTaskId = null;
-    document.getElementById("modalTitle").innerText = "Them cong viec moi";
+    document.getElementById("modalTitle").innerText = "Add New Task";
     document.getElementById("taskForm").reset();
     document.getElementById("taskModal").style.display = "flex";
 }
@@ -201,7 +214,7 @@ window.onclick = function(event) {
 };
 
 async function deleteTask(taskId) {
-    if (!confirm("Are you sure you want to delete this job?")) {
+    if (!confirm("Are you sure you want to delete this task?")) {
         return;
     }
 
@@ -229,6 +242,6 @@ function editTask(taskId) {
     document.getElementById("taskPriority").value = taskToEdit.priority;
     document.getElementById("taskStatus").value = taskToEdit.status;
     document.getElementById("taskDueDate").value = taskToEdit.dueDate;
-    document.getElementById("modalTitle").innerText = "Chinh sua cong viec";
+    document.getElementById("modalTitle").innerText = "Edit Task";
     document.getElementById("taskModal").style.display = "flex";
 }

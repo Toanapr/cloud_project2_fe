@@ -1,14 +1,20 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workspace - Task Manager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <header class="top-header">
-        <div class="logo">Task Master</div>
+        <div class="logo">
+            <span class="logo-mark" aria-hidden="true">TM</span>
+            <span>Task Master</span>
+        </div>
         <div class="user-info">
             <span>Welcome, <b>Pichu</b></span>
             <button class="btn-outline" onclick="logout()">Sign Out</button>
@@ -16,6 +22,14 @@
     </header>
 
     <main class="workspace">
+        <section class="workspace-hero" aria-labelledby="workspace-title">
+            <div>
+                <p class="workspace-eyebrow">Task workspace</p>
+                <h1 id="workspace-title">Plan the work. Clear the queue.</h1>
+            </div>
+            <button class="btn-primary workspace-primary-action" onclick="openModal()">Add Task</button>
+        </section>
+
         <div class="stats-container">
             <div class="stat-card">
                 <h3>All Tasks</h3>
@@ -23,28 +37,31 @@
             </div>
             <div class="stat-card">
                 <h3>Pending</h3>
-                <p id="pendingTasks" style="color: #d48b41;">0</p>
+                <p id="pendingTasks" class="stat-value pending-value">0</p>
             </div>
             <div class="stat-card">
                 <h3>Done</h3>
-                <p id="doneTasks" style="color: #5a8264;">0</p>
+                <p id="doneTasks" class="stat-value done-value">0</p>
             </div>
         </div>
 
-        <div class="action-bar">
+        <section class="action-bar" aria-label="Task filters">
             <div class="filters">
+                <label class="sr-only" for="filterPriority">Filter by priority</label>
                 <select id="filterPriority">
                     <option value="all">All Priorities</option>
                     <option value="high">High</option>
                     <option value="medium">Medium</option>
                     <option value="low">Low</option>
                 </select>
+                <label class="sr-only" for="filterStatus">Filter by status</label>
                 <select id="filterStatus">
                     <option value="all">All Statuses</option>
                     <option value="pending">Pending</option>
                     <option value="done">Done</option>
                 </select>
-                <input type="date" id="filterDueDate" title="Lọc theo ngày đến hạn">
+                <label class="sr-only" for="filterDueDate">Filter by due date</label>
+                <input type="date" id="filterDueDate" title="Filter by due date">
             </div>
             <div class="search-box">
                 <span class="search-icon">
@@ -53,36 +70,36 @@
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
                 </span>
-                <input type="text" id="searchTask" placeholder="Search Task...">
+                <label class="sr-only" for="searchTask">Search tasks</label>
+                <input type="text" id="searchTask" placeholder="Search tasks">
             </div>
-            <button class="btn-primary" onclick="openModal()">+ Add Task</button>
-        </div>
+        </section>
 
         <div class="task-list-header">
             <div>Task</div>
             <div>Priority</div>
             <div>Due Date</div>
             <div>Status</div>
-            <div></div> </div>
-        <div id="taskList" class="task-list-container">
-            </div>
+            <div></div>
+        </div>
+        <div id="taskList" class="task-list-container"></div>
     </main>
 
-    <div id="taskModal" class="modal">
+    <div id="taskModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <div class="modal-content">
             <h2 id="modalTitle">Add New Task</h2>
             <form id="taskForm">
                 <div class="input-group">
-                    <label>Title</label>
+                    <label for="taskTitle">Title</label>
                     <input type="text" id="taskTitle" required>
                 </div>
                 <div class="input-group">
-                    <label>Description</label>
+                    <label for="taskDesc">Description</label>
                     <textarea id="taskDesc" rows="3"></textarea>
                 </div>
                 <div class="flex-row">
                     <div class="input-group">
-                        <label>Priority</label>
+                        <label for="taskPriority">Priority</label>
                         <select id="taskPriority">
                             <option value="low">Low</option>
                             <option value="medium">Medium</option>
@@ -90,7 +107,7 @@
                         </select>
                     </div>
                     <div class="input-group">
-                        <label>Status</label>
+                        <label for="taskStatus">Status</label>
                         <select id="taskStatus">
                             <option value="pending">Pending</option>
                             <option value="done">Done</option>
@@ -98,7 +115,7 @@
                     </div>
                 </div>
                 <div class="input-group">
-                    <label>Due Date</label>
+                    <label for="taskDueDate">Due Date</label>
                     <input type="date" id="taskDueDate" required>
                 </div>
                 <div class="modal-actions">
