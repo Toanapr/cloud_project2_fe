@@ -1,4 +1,4 @@
-// MOCK DATA - Định dạng khớp 100% với yêu cầu DynamoDB của đồ án
+// MOCK DATA
 let mockTasks = [
     {
         taskId: "t1-uuid",
@@ -42,7 +42,7 @@ function renderTasks(tasks) {
         // KIỂM TRA TRẠNG THÁI: Nếu done thì thêm class 'task-completed', nếu không thì để trống
         const doneClass = (task.status === 'done') ? 'task-completed' : '';
 
-        // Tạo chuỗi HTML cho từng Thẻ (Card), nhớ nhét biến doneClass vào class của task-item
+        // Tạo chuỗi HTML cho từng Card công việc, chèn thêm class nếu đã hoàn thành
         const taskHTML = `
             <div class="task-item ${doneClass}">
                 <div class="task-info">
@@ -150,12 +150,13 @@ window.onclick = function(event) {
     }
 }
 
-// Hàm Xóa công việc giả lập (Tuần 1)
+// Hàm Xóa công việc giả lập
 function deleteTask(taskId) {
-    // Hỏi xác nhận trước khi xóa (UX tốt)
-    if(confirm('Bạn có chắc chắn muốn xóa công việc này?')) {
+    // Hỏi xác nhận trước khi xóa
+    if(confirm('Are you sure you want to delete this job?')) {
         // Lọc bỏ task có ID tương ứng ra khỏi mảng mockTasks
         mockTasks = mockTasks.filter(t => t.taskId !== taskId);
+        
         // Vẽ lại giao diện và cập nhật số liệu
         renderTasks(mockTasks);
         updateStats();
@@ -166,9 +167,9 @@ function deleteTask(taskId) {
 // Nếu là null, nghĩa là đang ở chế độ "Thêm mới".
 let currentEditTaskId = null; 
 
-// Hàm xử lý khi nhấn nút "Chỉnh sửa"
+// Hàm xử lý khi Chỉnh sửa
 function editTask(taskId) {
-    // 1. Tìm công việc cần sửa trong mảng dữ liệu (mockTasks)
+    // 1. Tìm công việc cần sửa trong mockTasks
     const taskToEdit = mockTasks.find(t => t.taskId === taskId);
     if (!taskToEdit) return;
 

@@ -119,14 +119,14 @@ body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color);
     outline: none;
     transition: all 0.3s ease;
 }
-/* Tạo hiệu ứng đổi màu nhẹ khi nhấn vào ô search cho sang trọng */
+/* Tạo hiệu ứng đổi search */
 .search-box input:focus {
     border-color: var(--primary-color);
     /* box-shadow: 0 0 5px rgba(129, 11, 56, 0.2); */
     box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
 }
 
-/* Task Grid (Tuyệt chiêu UX) */
+/* Task Grid */
 .task-list-header { display: grid; grid-template-columns: 3fr 1fr 1fr 1fr 60px; padding: 15px; font-weight: bold; color: var(--text-muted); border-bottom: 2px solid var(--secondary-color); }
 .task-item { display: grid; grid-template-columns: 3fr 1fr 1fr 1fr 60px; background: var(--surface-color); margin-bottom: 10px; padding: 15px; border-radius: 8px; align-items: center; border: 1px solid var(--secondary-color); transition: transform 0.2s; }
 .task-item:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
@@ -193,7 +193,7 @@ body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color);
     top: 100%;
     background-color: var(--surface-color);
     min-width: 130px;
-    box-shadow: 0px 8px 16px rgba(84, 26, 26, 0.15); /* Bóng đổ màu đỏ sẫm */
+    box-shadow: 0px 8px 16px rgba(84, 26, 26, 0.15); 
     border: 1px solid var(--secondary-color);
     border-radius: 8px;
     z-index: 10;
