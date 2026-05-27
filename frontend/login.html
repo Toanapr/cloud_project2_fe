@@ -23,7 +23,7 @@
         </section>
         
         <section class="login-form-wrapper" aria-label="Sign in form">
-            <div class="login-form">
+            <!-- <div class="login-form">
                 <p class="login-eyebrow">Workspace sign in</p>
                 <h2 id="login-title">Welcome back</h2>
                 <p class="login-helper">Use your workspace email to open the task board.</p>
@@ -39,6 +39,57 @@
                     </div>
                     <button type="submit" class="btn-primary login-submit">Sign In</button>
                 </form>
+            </div> -->
+            <div class="login-form">
+                <p class="login-eyebrow">Workspace Access</p>
+                
+                <div id="signInContainer">
+                    <h2 id="login-title">Welcome back</h2>
+                    <p class="login-helper">Use your workspace email to open the task board.</p>
+                    
+                    <div id="signInError" class="auth-error"></div>
+
+                    <form id="authForm">
+                        <div class="input-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" required placeholder="you@taskmaster.vn">
+                        </div>
+                        <div class="input-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" required placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="btn-primary login-submit">Sign In</button>
+                    </form>
+                    <p style="text-align: center; margin-top: 20px; font-size: 14px; font-weight: 500;">
+                        Don't have an account? <a href="#" id="showSignUp" style="color: var(--primary-color); font-weight: 800; text-decoration: none;">Sign up now</a>
+                    </p>
+                </div>
+
+                <div id="signUpContainer" style="display: none;">
+                    <h2 id="signup-title">Create Account</h2>
+                    <p class="login-helper">Create a new workspace for you.</p>
+                    
+                    <div id="signUpError" class="auth-error"></div>
+
+                    <form id="signUpForm">
+                        <div class="input-group">
+                            <label for="reg-email">Email</label>
+                            <input type="email" id="reg-email" required placeholder="you@taskmaster.vn">
+                        </div>
+                        <div class="input-group">
+                            <label for="reg-password">Password</label>
+                            <input type="password" id="reg-password" required placeholder="At least 8 characters">
+                        </div>
+                        <div class="input-group">
+                            <label for="reg-confirm">Confirm Password</label>
+                            <input type="password" id="reg-confirm" required placeholder="Re-enter your password">
+                        </div>
+                        <button type="submit" class="btn-primary login-submit" style="background: var(--accent-color);">Sign Up</button>
+                    </form>
+                    <p style="text-align: center; margin-top: 20px; font-size: 14px; font-weight: 500;">
+                        Already have an account? <a href="#" id="showSignIn" style="color: var(--primary-color); font-weight: 800; text-decoration: none;">Sign In</a>
+                    </p>
+                </div>
             </div>
         </section>
     </main>

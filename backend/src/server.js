@@ -5,6 +5,7 @@ const { handler: getTasks } = require("./handlers/getTasks");
 const { handler: createTask } = require("./handlers/createTask");
 const { handler: updateTask } = require("./handlers/updateTask");
 const { handler: deleteTask } = require("./handlers/deleteTask");
+const { handler: signup } = require("./handlers/signup");
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.get("/tasks", route(getTasks));
 app.post("/tasks", route(createTask));
 app.put("/tasks/:id", route(updateTask));
 app.delete("/tasks/:id", route(deleteTask));
+app.post("/signup", route(signup));
 
 if (require.main === module) {
   app.listen(config.port, () => {

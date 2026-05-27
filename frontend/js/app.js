@@ -1,6 +1,12 @@
 const API_BASE_URL = "http://localhost:3000";
 const LOCAL_USER_ID = "user-1";
 
+const dueDateInput = document.getElementById('taskDueDate');
+if (dueDateInput) {
+    const today = new Date().toISOString().split('T')[0];
+    dueDateInput.min = today; 
+}
+
 let tasks = [];
 let visibleTasks = [];
 let currentEditTaskId = null;
@@ -158,14 +164,29 @@ function closeModal() {
 
 document.getElementById("taskForm").addEventListener("submit", async function(e) {
     e.preventDefault();
+    
+    const dueDateValue = document.getElementById("taskDueDate").value;
+    if (!dueDateValue) {
+        alert("Please select a due date!");
+        return; 
+    }
+    const selectedDate = new Date(dueDateValue);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate < today) {
+        alert("Due day cannot be in the past!");
+        return; 
+    }
 
     const payload = {
         title: document.getElementById("taskTitle").value,
         description: document.getElementById("taskDesc").value,
         priority: document.getElementById("taskPriority").value,
         status: document.getElementById("taskStatus").value,
-        dueDate: document.getElementById("taskDueDate").value
+        dueDate: dueDateValue
     };
+    
 
     try {
         if (currentEditTaskId) {

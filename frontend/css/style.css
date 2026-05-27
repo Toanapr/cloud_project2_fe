@@ -598,3 +598,19 @@ textarea:focus-visible {
     text-decoration: line-through;
     color: var(--text-muted);
 }
+
+
+/* ================= HIỆU ỨNG THÔNG BÁO LỖI ================= */
+.auth-error {
+    background-color: #FEF2F2;
+    color: #DC2626;
+    border: 1px solid #FCA5A5;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: none; /* Mặc định ẩn, chỉ hiện khi có lỗi do JS kích hoạt */
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(220, 38, 38, 0.05);
+}
