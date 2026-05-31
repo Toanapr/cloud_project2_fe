@@ -1,18 +1,7 @@
 // ================= COGNITO CONFIGURATION =================
-const COGNITO_USER_POOL_ID = "us-east-1_zuo5aJas6";
+const COGNITO_REGION = "us-east-1";
 const COGNITO_CLIENT_ID = "4d09kp0ug5r43e56lp671rcd8v";
-
-// 1. Kéo thư viện từ link CDN HTML
-const { Auth, Amplify } = window.aws_amplify;
-
-// 2. Cấu hình đúng chuẩn V5 
-Amplify.configure({
-    Auth: {
-        region: "us-east-1",
-        userPoolId: COGNITO_USER_POOL_ID,
-        userPoolWebClientId: COGNITO_CLIENT_ID // Phải là userPoolWebClientId
-    }
-});
+const COGNITO_URL = `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/`;
 
 // ================= HELPER FUNCTIONS =================
 function showError(elementId, message) {
@@ -50,7 +39,7 @@ document.getElementById('showSignIn').addEventListener('click', function(e) {
     signInContainer.style.display = 'block';
 });
 
-// ================= SIGN UP FORM (COGNITO) =================
+// ================= SIGN UP FORM (FETCH API) =================
 document.getElementById('signUpForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
     hideError('signUpError'); 
@@ -77,23 +66,38 @@ document.getElementById('signUpForm')?.addEventListener('submit', async function
     }
 
     try {
-        // Cú pháp V5 chuẩn để Đăng ký
-        await Auth.signUp({
-            username: email,
-            password: password,
-            attributes: {
-                email: email
-            }
+        // Gắn HTTP Request bắn thẳng sang AWS Cognito
+        const response = await fetch(COGNITO_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-amz-json-1.1',
+                'X-Amz-Target': 'AWSCognitoIdentityProviderService.SignUp'
+            },
+            body: JSON.stringify({
+                ClientId: COGNITO_CLIENT_ID,
+                Username: email,
+                Password: password,
+                UserAttributes: [
+                    { Name: "email", Value: email }
+                ]
+            })
         });
+
+        const data = await response.json();
+
+        // Bắt lỗi từ Cognito (như trùng email, pass yếu...)
+        if (!response.ok) {
+            throw new Error(data.message || "Sign up failed.");
+        }
 
         alert("🎉 Registration successful! Please check your email to confirm your account.");
         document.getElementById('showSignIn').click(); 
     } catch (error) {
-        showError('signUpError', error.message || "Sign up failed. Please try again.");
+        showError('signUpError', error.message);
     }
 });
 
-// ================= SIGN IN FORM (COGNITO) =================
+// ================= SIGN IN FORM (FETCH API) =================
 document.getElementById('authForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
     hideError('signInError'); 
@@ -105,36 +109,44 @@ document.getElementById('authForm')?.addEventListener('submit', async function(e
         showError('signInError', "Please enter both Email and Password!");
         return;
     }
-    if (!isValidEmail(email)) {
-        showError('signInError', "Invalid email format!");
-        return;
-    }
 
     try {
-        // Cú pháp V5 chuẩn để Đăng nhập
-        await Auth.signIn(email, password);
+        // Gọi Auth Flow của Cognito
+        const response = await fetch(COGNITO_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-amz-json-1.1',
+                'X-Amz-Target': 'AWSCognitoIdentityProviderService.InitiateAuth'
+            },
+            body: JSON.stringify({
+                AuthFlow: 'USER_PASSWORD_AUTH',
+                ClientId: COGNITO_CLIENT_ID,
+                AuthParameters: {
+                    USERNAME: email,
+                    PASSWORD: password
+                }
+            })
+        });
 
-        // Lấy token trong V5 (khác hoàn toàn V6)
-        const session = await Auth.currentSession();
-        const idToken = session.getIdToken().getJwtToken();
+        const data = await response.json();
 
-        // Lưu vào kho để file app.js lấy ra dùng
-        localStorage.setItem('userToken', idToken);
-        
-        // Nhảy sang trang chủ
-        window.location.href = "index.html";
-        
+        if (!response.ok) {
+            throw new Error(data.message || "Sign in failed.");
+        }
+
+        if (data.AuthenticationResult) {
+            // Lấy ID Token và nhét vào ví
+            localStorage.setItem('userToken', data.AuthenticationResult.IdToken);
+            window.location.href = "index.html";
+        } else {
+            throw new Error("Sign in failed. Check if your account is confirmed.");
+        }
     } catch (error) {
-        showError('signInError', error.message || "Sign in failed. Invalid credentials or user not confirmed.");
+        showError('signInError', error.message);
     }
 });
 
 function logout() {
-    Auth.signOut().then(() => {
-        localStorage.removeItem('userToken');
-        window.location.href = "login.html";
-    }).catch(err => {
-        localStorage.removeItem('userToken');
-        window.location.href = "login.html";
-    });
+    localStorage.removeItem('userToken');
+    window.location.href = "login.html";
 }
