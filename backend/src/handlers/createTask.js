@@ -16,13 +16,20 @@ async function handler(event = {}) {
       createdAt: new Date().toISOString()
     };
 
-    await documentClient.send(
-      new PutCommand({
-        TableName: config.tableName,
-        Item: task,
-        ConditionExpression: "attribute_not_exists(taskId)"
-      })
-    );
+    const command = new PutCommand({
+      TableName: config.tableName,
+      Item: task,
+      ConditionExpression: "attribute_not_exists(taskId)"
+    });
+
+    console.log("Calling DynamoDB...");
+
+    const result = await documentClient.send(command);
+
+    console.log("DynamoDB call success", {
+      statusCode: result.$metadata?.httpStatusCode,
+      requestId: result.$metadata?.requestId
+    });
 
     return jsonResponse(201, { task });
   } catch (error) {

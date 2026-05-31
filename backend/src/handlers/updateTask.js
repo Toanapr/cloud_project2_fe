@@ -12,12 +12,19 @@ async function handler(event = {}) {
       fail(400, "task id is required.");
     }
 
-    const existing = await documentClient.send(
-      new GetCommand({
-        TableName: config.tableName,
-        Key: { taskId }
-      })
-    );
+    const getCommand = new GetCommand({
+      TableName: config.tableName,
+      Key: { taskId }
+    });
+
+    console.log("Calling DynamoDB...");
+
+    const existing = await documentClient.send(getCommand);
+
+    console.log("DynamoDB call success", {
+      statusCode: existing.$metadata?.httpStatusCode,
+      requestId: existing.$metadata?.requestId
+    });
 
     const userId = getCurrentUserId(event);
     if (!existing.Item || existing.Item.userId !== userId) {
@@ -38,16 +45,23 @@ async function handler(event = {}) {
       return `#${field} = :${field}`;
     });
 
-    const result = await documentClient.send(
-      new UpdateCommand({
-        TableName: config.tableName,
-        Key: { taskId },
-        UpdateExpression: `SET ${setExpressions.join(", ")}`,
-        ExpressionAttributeNames: expressionNames,
-        ExpressionAttributeValues: expressionValues,
-        ReturnValues: "ALL_NEW"
-      })
-    );
+    const updateCommand = new UpdateCommand({
+      TableName: config.tableName,
+      Key: { taskId },
+      UpdateExpression: `SET ${setExpressions.join(", ")}`,
+      ExpressionAttributeNames: expressionNames,
+      ExpressionAttributeValues: expressionValues,
+      ReturnValues: "ALL_NEW"
+    });
+
+    console.log("Calling DynamoDB...");
+
+    const result = await documentClient.send(updateCommand);
+
+    console.log("DynamoDB call success", {
+      statusCode: result.$metadata?.httpStatusCode,
+      requestId: result.$metadata?.requestId
+    });
 
     return jsonResponse(200, { task: result.Attributes });
   } catch (error) {

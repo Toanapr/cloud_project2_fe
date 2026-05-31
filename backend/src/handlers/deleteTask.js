@@ -12,24 +12,38 @@ async function handler(event = {}) {
       fail(400, "task id is required.");
     }
 
-    const existing = await documentClient.send(
-      new GetCommand({
-        TableName: config.tableName,
-        Key: { taskId }
-      })
-    );
+    const getCommand = new GetCommand({
+      TableName: config.tableName,
+      Key: { taskId }
+    });
+
+    console.log("Calling DynamoDB...");
+
+    const existing = await documentClient.send(getCommand);
+
+    console.log("DynamoDB call success", {
+      statusCode: existing.$metadata?.httpStatusCode,
+      requestId: existing.$metadata?.requestId
+    });
 
     const userId = getCurrentUserId(event);
     if (!existing.Item || existing.Item.userId !== userId) {
       fail(404, "task not found.");
     }
 
-    await documentClient.send(
-      new DeleteCommand({
-        TableName: config.tableName,
-        Key: { taskId }
-      })
-    );
+    const deleteCommand = new DeleteCommand({
+      TableName: config.tableName,
+      Key: { taskId }
+    });
+
+    console.log("Calling DynamoDB...");
+
+    const result = await documentClient.send(deleteCommand);
+
+    console.log("DynamoDB call success", {
+      statusCode: result.$metadata?.httpStatusCode,
+      requestId: result.$metadata?.requestId
+    });
 
     return jsonResponse(200, { deleted: true, taskId });
   } catch (error) {

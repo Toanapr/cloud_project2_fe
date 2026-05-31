@@ -19,13 +19,15 @@ function bodyOf(response) {
   return JSON.parse(response.body);
 }
 
-test("GET /tasks returns seeded tasks from userId-index", async () => {
+test("GET /tasks returns all tasks", async () => {
   const response = await getTasks(event({ userId: "user-1" }));
   const body = bodyOf(response);
 
   assert.equal(response.statusCode, 200);
   assert.ok(Array.isArray(body.tasks));
-  assert.ok(body.tasks.every((task) => task.userId === "user-1"));
+  assert.ok(body.tasks.length >= 3);
+  assert.ok(body.tasks.some((task) => task.userId === "user-1"));
+  assert.ok(body.tasks.some((task) => task.userId === "user-2"));
 });
 
 test("POST, PUT and DELETE task lifecycle", async () => {
