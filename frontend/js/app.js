@@ -73,7 +73,7 @@ async function apiRequest(path, options = {}) {
 async function loadTasks() {
     try {
         const data = await apiRequest("/tasks");
-        tasks = data.tasks || [];
+        tasks = Array.isArray(data.tasks) ? data.tasks.filter(Boolean) : [];
         applyFilters();
     } catch (error) {
         showError(error.message);
@@ -93,12 +93,19 @@ function applyFilters() {
     const searchTerm = (document.getElementById("searchTask")?.value || "").trim().toLowerCase();
 
     visibleTasks = tasks.filter((task) => {
-        const matchesPriority = priority === "all" || task.priority === priority;
-        const matchesStatus = status === "all" || task.status === status;
+        if (!task) return false;
+
+        const taskStatus = task.status || "pending";
+        const taskPriority = task.priority || "low";
+        const taskTitle = task.title || "";
+        const taskDescription = task.description || "";
+
+        const matchesPriority = priority === "all" || taskPriority === priority;
+        const matchesStatus = status === "all" || taskStatus === status;
         const matchesDueDate = !dueDate || task.dueDate === dueDate;
         const matchesSearch = !searchTerm ||
-            task.title.toLowerCase().includes(searchTerm) ||
-            (task.description || "").toLowerCase().includes(searchTerm);
+            taskTitle.toLowerCase().includes(searchTerm) ||
+            taskDescription.toLowerCase().includes(searchTerm);
 
         return matchesPriority && matchesStatus && matchesDueDate && matchesSearch;
     });
@@ -126,9 +133,13 @@ function renderTasks(taskList) {
     }
 
     taskList.forEach((task) => {
-        const doneClass = task.status === "done" ? "task-completed" : "";
-        const priorityLabel = PRIORITY_LABELS[task.priority] || task.priority;
-        const statusLabel = STATUS_LABELS[task.status] || task.status;
+        if (!task) return;
+
+        const taskStatus = task.status || "pending";
+        const taskPriority = task.priority || "low";
+        const doneClass = taskStatus === "done" ? "task-completed" : "";
+        const priorityLabel = PRIORITY_LABELS[taskPriority] || taskPriority;
+        const statusLabel = STATUS_LABELS[taskStatus] || taskStatus;
         const taskHTML = `
             <div class="task-item ${doneClass}">
                 <div class="task-info">
@@ -153,9 +164,9 @@ function renderTasks(taskList) {
 }
 
 function updateStats() {
-    document.getElementById("totalTasks").innerText = tasks.length;
-    document.getElementById("pendingTasks").innerText = tasks.filter((task) => task.status === "pending").length;
-    document.getElementById("doneTasks").innerText = tasks.filter((task) => task.status === "done").length;
+    document.getElementById("totalTasks").innerText = tasks.filter(Boolean).length;
+    document.getElementById("pendingTasks").innerText = tasks.filter((task) => task?.status === "pending").length;
+    document.getElementById("doneTasks").innerText = tasks.filter((task) => task?.status === "done").length;
 }
 
 function showError(message) {
