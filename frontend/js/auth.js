@@ -1,3 +1,6 @@
+const COGNITO_USER_POOL_ID = "us-east-1_zuo5aJas6";
+const COGNITO_CLIENT_ID = "4d09kp0ug5r43e56lp671rcd8v";
+
 // ================= COGNITO CONFIGURATION =================
 Amplify.configure({
     Auth: {
