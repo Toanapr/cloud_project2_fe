@@ -14,10 +14,19 @@ function getCurrentUserId(event) {
   if (event?.requestContext?.authorizer?.claims?.sub) {
     return event.requestContext.authorizer.claims.sub;
   }
+
+  // API Gateway HTTP API + JWT authorizer
+  if (event?.requestContext?.authorizer?.jwt?.claims?.sub) {
+    return event.requestContext.authorizer.jwt.claims.sub;
+  }
   
   // Fallback: Lấy từ email claim nếu sub không có
   if (event?.requestContext?.authorizer?.claims?.email) {
     return event.requestContext.authorizer.claims.email;
+  }
+
+  if (event?.requestContext?.authorizer?.jwt?.claims?.email) {
+    return event.requestContext.authorizer.jwt.claims.email;
   }
 
   // Ưu tiên 2: Lấy từ query parameter (test local)

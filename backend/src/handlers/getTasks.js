@@ -1,12 +1,19 @@
-const { ScanCommand } = require("@aws-sdk/lib-dynamodb");
+const { QueryCommand } = require("@aws-sdk/lib-dynamodb");
 const { config } = require("../config");
 const { documentClient } = require("../lib/dynamodb");
+const { getCurrentUserId } = require("../lib/auth");
 const { handleError, jsonResponse } = require("../lib/http");
 
 async function handler(event = {}) {
   try {
-    const command = new ScanCommand({
-      TableName: config.tableName
+    const userId = getCurrentUserId(event);
+    const command = new QueryCommand({
+      TableName: config.tableName,
+      IndexName: "userId-index",
+      KeyConditionExpression: "userId = :userId",
+      ExpressionAttributeValues: {
+        ":userId": userId
+      }
     });
 
     console.log("Calling DynamoDB...");
